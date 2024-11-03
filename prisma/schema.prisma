@@ -1,0 +1,82 @@
+generator client {
+  
+}
+
+datasource db {
+  
+}
+
+model User {
+    id                  Int                 @id @default(autoincrement())
+    username            String              @unique
+    email               String              @unique
+    password            String
+    notifications       Notification[]
+    createdAt           DateTime            @default(now())
+    createdBets         Bet[]               @relation("CreatedBets")
+    receivedBets        Bet[]               @relation("ReceivedBets")
+    currentBets         Bet[]    
+    previousBets        Bet[]    
+    friends             User[]              @relation("UserFriends")
+    groups              Group[]             @relation("UserGroups")
+}
+
+model Bet {
+    id                  Int                 @id @default(autoincrement())
+    description         String
+    deadline            DateTime            @default(now)
+    amount              Float
+    creatorId           Int
+    creator             User                @relation("CreatedBets")
+    opponentId          Int?
+    opponent            User?               @relation("ReceivedBets")
+    opponentGroupId     Int?      
+    opponentGroup       Group?              @relation("ReceivedBetsGroup")
+    createdAt           DateTime            @default(now)
+    resolvedAt          DateTime?
+    status              BetStatus           @default(PENDING)
+    resolveMessage      String
+}
+
+model Group {
+    id                  Int                 @id @default(autoincrement())
+    name                String              @unique
+    members             User[]              @relation("UserGroups")
+    receivedBets        Bet[]               @relation("ReceivedBetsGroup")
+}
+
+model Notification {
+    id                  Int                 @id @default(autoincrement())
+    headerMessage       String
+    message             String
+    userId              Int
+    user                User                @relation(fields: [userId], references: [id])
+    isRead              Boolean             @default(false)
+    createdAt           DateTime            @default(now())
+}
+
+model Transaction {
+    id                  Int                 @id @default(autoincrement())
+    betId               Int
+    bet                 Bet                 @relation(fields: [betId], references: [id])
+    senderId            Int
+    sender              User
+    receiverId          Int
+    receiver            User
+    amount              Float
+    status              TransactionStatus   @default(PENDING)
+    createdAt           DateTime            @default(now())
+}
+
+enum BetStatus {
+    PENDING
+    COMPLETED
+    CANCELED
+    SETTLED 
+}
+
+enum TransactionStatus {
+    PENDING
+    COMPLETED
+    FAILED
+}
