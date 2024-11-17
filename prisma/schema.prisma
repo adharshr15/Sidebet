@@ -15,18 +15,26 @@ model User {
     createdAt           DateTime            @default(now())
     updatedAt           DateTime            @updatedAt
     notifications       Notification[]  
-    friends             User[]              @relation("UserFriends")
-    friendsOf           User[]              @relation("UserFriends")
-    groups              Group[]             @relation("UserGroups")
+    friendsTo           User[]              @relation("UserFriends")
+    friendsFrom         User[]              @relation("UserFriends")
+    memberOfGroups      Group[]             @relation("GroupMembers")
+    createdBets         Bet[]               @relation("CreatedBets")
+    receivedBets        Bet[]               @relation("ReceivedBets")
+    sentTransactions    Transaction[]       @relation("SentTransactions")
+    receivedTransactions Transaction[]      @relation("ReceivedTransactions")
 }
 
 model Bet {
     id                  Int                 @id @default(autoincrement())
+    description         String?
     deadline            DateTime?           @default(now())
     amount              Float
     creatorId           Int
-    opponentId          Int?
-    opponentGroupId     Int?
+    creator             User                @relation("CreatedBets", fields: [creatorId], references: [id])
+    opponentId          Int?                
+    opponent            User?               @relation("ReceivedBets", fields: [opponentId], references: [id])
+    opponentGroupId     Int?                
+    opponentGroup       Group?              @relation("ReceivedGroupBets", fields: [opponentGroupId], references: [id])
     createdAt           DateTime            @default(now())
     resolvedAt          DateTime?
     status              BetStatus           @default(PENDING)
@@ -36,7 +44,8 @@ model Bet {
 model Group {
     id                  Int                 @id @default(autoincrement())
     name                String   
-    members             User[]              @relation("UserGroups") 
+    members             User[]              @relation("GroupMembers")
+    receivedBets        Bet[]               @relation("ReceivedGroupBets")
 }
 
 model Notification {
@@ -46,13 +55,16 @@ model Notification {
     userId              Int
     user                User                @relation(fields: [userId], references: [id])
     createdAt           DateTime            @default(now())
+    isRead              Boolean             @default(false)
 }
 
 model Transaction {
     id                  Int                 @id @default(autoincrement())
     betId               Int 
     senderId            Int
+    sender              User                @relation("SentTransactions", fields: [senderId], references: [id])
     receiverId          Int
+    receiver            User                @relation("ReceivedTransactions", fields: [receiverId], references: [id])
     amount              Float
     status              TransactionStatus   @default(PENDING)
     createdAt           DateTime            @default(now())

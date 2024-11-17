@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE `Bet` ADD CONSTRAINT `Bet_opponentId_fkey` FOREIGN KEY (`opponentId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
