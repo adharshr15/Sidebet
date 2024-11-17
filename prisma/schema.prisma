@@ -13,7 +13,6 @@ model User {
     email               String              @unique
     password            String
     createdAt           DateTime            @default(now())
-    updatedAt           DateTime            @updatedAt
     notifications       Notification[]  
     friendsTo           User[]              @relation("UserFriends")
     friendsFrom         User[]              @relation("UserFriends")
