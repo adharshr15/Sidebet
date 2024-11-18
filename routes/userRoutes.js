@@ -3,7 +3,10 @@ const { createUser, getUsers, updateUser, deleteUser } = require('../controllers
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const user = await createUser(req.body.username, req.body.email, req.body.password);
+  const user = await createUser(req.body.username, 
+    req.body.email, 
+    req.body.password
+  );
   res.json(user);
 });
 
@@ -13,7 +16,10 @@ router.get('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-  const user = await updateUser(parseInt(req.params.id), req.body);
+  const user = await updateUser(
+    parseInt(req.params.id), 
+    req.body
+  );
   res.json(user);
 });
 
