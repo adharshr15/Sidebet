@@ -16,6 +16,7 @@ model User {
     notifications       Notification[]  
     friendsTo           User[]              @relation("UserFriends")
     friendsFrom         User[]              @relation("UserFriends")
+    createdGroups       Group[]             
     memberOfGroups      Group[]             @relation("GroupMembers")
     createdBets         Bet[]               @relation("CreatedBets")
     receivedBets        Bet[]               @relation("ReceivedBets")
@@ -34,6 +35,7 @@ model Bet {
     opponent            User?               @relation("ReceivedBets", fields: [opponentId], references: [id])
     opponentGroupId     Int?                
     opponentGroup       Group?              @relation("ReceivedGroupBets", fields: [opponentGroupId], references: [id])
+    isGroupBet          Boolean             @default(false)
     createdAt           DateTime            @default(now())
     resolvedAt          DateTime?
     status              BetStatus           @default(PENDING)
@@ -43,6 +45,8 @@ model Bet {
 model Group {
     id                  Int                 @id @default(autoincrement())
     name                String   
+    creatorId           Int
+    creator             User                @relation(fields: [creatorId], references: [id])
     members             User[]              @relation("GroupMembers")
     receivedBets        Bet[]               @relation("ReceivedGroupBets")
 }
