@@ -3,7 +3,7 @@ const { createGroup, getGroups, updateGroup, deleteGroup } = require('../control
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-    const group = await createUser(
+    const group = await createGroup(
         req.body.name,
         req.body.creatorId
     );

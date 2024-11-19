@@ -22,21 +22,30 @@ const createBet = async (betData) => {
     try {
         // finds creator User
         const creator = await prisma.user.findUnique({
-            where: { id: creatorId }
+            where: { id: creatorId },
+            include: {
+                createdBets: true,
+            }
         })
         if (!creator) { throw new Error('Creator not found'); }
 
         // if Group Bet, finds opponentGroup Group
         if (isGroupBet) {
             const group = await prisma.group.findUnique({
-                where: { id: opponentGroupId }
+                where: { id: opponentGroupId },
+                include: {
+                    receivedBets: true,
+                }
             });
             if (!group) { throw new Error('Opponent group not found'); }
         }
         // if not Group Bet, finds opponent User
         else {
             const opponent = await prisma.user.findUnique({
-                where: { id: opponentId }
+                where: { id: opponentId },
+                include: {
+                    receivedBets: true,
+                }
             });
             if (!opponent) {
                 throw new Error('Opponent not found');

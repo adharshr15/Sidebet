@@ -3,14 +3,33 @@ const prisma = new PrismaClient();
 
 // CREATE
 const createGroup = async (name, creatorId) => {
-    const group = await prisma.group.create({
-      data: {
-        name,
-        creatorId
-      },
-    });
-  
-    return group;
+    try {
+        const creator = await prisma.user.findUnique({
+            where: { id: creatorId },
+            include: {
+                createdGroups: true,
+            }
+        })
+        if (!creator) { throw new Error('Creator not found'); }
+
+        const group = await prisma.group.create({
+            data: {
+                name,
+                creatorId
+            },
+            include: {
+                creator: {
+                    include: {
+                        createdGroups: true
+                    }
+                }
+            },
+        });
+    
+        return group;
+    } catch (e) {
+        throw new Error(`Failed to Create new Group ${e}`)
+    }
 };
 
 // READ
