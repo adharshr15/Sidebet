@@ -71,6 +71,10 @@ model Transaction {
     amount              Float
     status              TransactionStatus   @default(PENDING)
     createdAt           DateTime            @default(now())
+    completedAt         DateTime?
+    paypalTransactionId String?
+    paypalStatus        String?
+    paypalLink          String?
 }
 
 
