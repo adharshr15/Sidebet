@@ -12,4 +12,4 @@ router.post('login', async (req, res) => {
     res.json(auth);
 })
 
-export default router;
+module.exports = router;

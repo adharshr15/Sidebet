@@ -1,8 +1,9 @@
-import bcrypt, { hash } from 'bcrypt';
-import jwt from 'jsonwebtoken';
+const bcrypt = require('bcrypt');
+const { hash } = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-import { createUser } from '../controllers/userController';
+const { createUser } = require('../controllers/userController');
 
 // SIGNUP
 const signup = async (username, email, name, password) => {
