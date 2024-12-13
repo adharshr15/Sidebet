@@ -6,16 +6,16 @@ app.use(express.json());
 
 
 // PUBLIC ROUTES
-const userRoutes = require('./src/routes/userRoutes');
+const userRoutes = require('./routes/userRoutes');
 app.use('/users', userRoutes);
 
-const groupRoutes = require('./src/routes/groupRoutes');
+const groupRoutes = require('./routes/groupRoutes');
 app.use('/groups', groupRoutes);
 
-const betRoutes = require('./src/routes/betRoutes');
+const betRoutes = require('./routes/betRoutes');
 app.use('/bets', betRoutes);
 
-const authRoutes = require('./src/routes/authRoutes');
+const authRoutes = require('./routes/authRoutes');
 app.use('/auth', authRoutes)
 
 
