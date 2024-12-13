@@ -7,8 +7,8 @@ const createUser = async (username, email, password) => {
     data: {
       username,  // Make sure this is passed in
       email,
-      password,
-    },
+      password
+    }
   });
 
   return user;

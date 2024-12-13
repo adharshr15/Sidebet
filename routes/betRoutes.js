@@ -1,7 +1,5 @@
 const express = require('express');
 const { createBet, getBets, updateBet, deleteBet } = require('../controllers/betController');
-const { updateUser } = require('../controllers/userController');
-const { updateGroup } = require('../controllers/groupController')
 const router = express.Router();
 
 router.post('/', async (req, res) => {
