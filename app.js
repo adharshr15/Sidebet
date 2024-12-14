@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-//import { authenticate } from './src/middlewares/authMiddleware.js';
+const { authenticate } = require('./middlewares/authMiddleware.js');
 
 app.use(express.json());
 
@@ -20,9 +20,9 @@ app.use('/auth', authRoutes)
 
 
 // // PROTECTED ROUTES
-// app.get('/protected', authenticate, (req, res) => {
-//     res.status(200).json({ message: 'You are authorized!', userId: req.userId });
-// });
+app.get('/protected', authenticate, (req, res) => {
+    res.status(200).json({ message: 'You are authorized!', userId: req.userId });
+});
 
 
 app.listen(3000, () => console.log('Server running on port 3000'));
