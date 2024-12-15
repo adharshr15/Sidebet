@@ -5,7 +5,9 @@ const jwt = require('jsonwebtoken')
 // sends unauthorized error if not
 
 const authenticate = (req, res, next) => {
-    // creates list out of token
+    // creates list out of header to find token
+    console.log('Authenticate middleware hit');
+    
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
