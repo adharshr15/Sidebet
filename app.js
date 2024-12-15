@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-//import { authenticate } from './src/middlewares/authMiddleware.js';
-
+const { authenticate } = require('./middlewares/authenticateMiddleware.js');
+const { authorizeBetCreator, authorizeGroupCreator } = require('./middlewares/authorizeMiddleware.js');
 app.use(express.json());
 
 
@@ -19,10 +19,16 @@ const authRoutes = require('./routes/authRoutes');
 app.use('/auth', authRoutes)
 
 
-// // PROTECTED ROUTES
-// app.get('/protected', authenticate, (req, res) => {
-//     res.status(200).json({ message: 'You are authorized!', userId: req.userId });
-// });
+// TEST ROUTES
+app.get('/protected', authenticate, (req, res) => {
+    console.log('Route hit');
+    res.status(200).json({ message: 'You are authorized!', userId: req.userId });
+});
+
+app.post('/test-authorization', authenticate, authorizeGroupCreator, (req, res) => {
+    console.log('Route hit');
+    res.status(200).json({ message: 'Action allowed', userId: req.userId });
+});
 
 
 app.listen(3000, () => console.log('Server running on port 3000'));

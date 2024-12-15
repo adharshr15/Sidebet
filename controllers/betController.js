@@ -2,19 +2,22 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // CREATE
-const createBet = async (betData) => {
+const createBet = async (userId, betData) => {
     const {
         description,
         deadline,
         amount,
-        creatorId,
+        //creatorId,    ** using userId now passed through params instead of betData
         opponentId,
         opponentGroupId,
         isGroupBet
     } = betData;
 
+    const creatorId = userId;
+    console.log(creatorId)
 
     // makes sure required opponent id is given
+    if (!opponentGroupId && !opponentId) { throw new Error('Bet must have opponent') }
     if (isGroupBet && !opponentGroupId) { throw new Error('Group Bet requires opponentGroupId') }
     if (!isGroupBet && !opponentId) { throw new Error('Individual Bet requires opponentId') }
 
@@ -23,9 +26,7 @@ const createBet = async (betData) => {
         // finds creator User
         const creator = await prisma.user.findUnique({
             where: { id: creatorId },
-            include: {
-                createdBets: true,
-            }
+            include: { createdBets: true }
         })
         if (!creator) { throw new Error('Creator not found'); }
 
@@ -79,8 +80,10 @@ const createBet = async (betData) => {
 
 
 // READ
-const getBets = async() => {
-    const bets = await prisma.bet.findMany();
+const getBets = async (userId) => {
+    const bets = await prisma.bet.findMany({
+        where: { creatorId: userId }
+    });
     return bets;
 }
 
@@ -101,7 +104,7 @@ const deleteBet = async(id) => {
         where: { id }
     });
 
-    return {message: "Bet Deleted" };
+    return { message: "Bet Deleted" };
 }
 
 module.exports = { createBet, getBets, updateBet, deleteBet }

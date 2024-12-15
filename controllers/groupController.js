@@ -2,8 +2,11 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // CREATE
-const createGroup = async (name, creatorId) => {
+const createGroup = async (userId, name) => {
+    const creatorId = userId;
+
     try {
+        // get creator from creatorId
         const creator = await prisma.user.findUnique({
             where: { id: creatorId },
             include: {
@@ -12,6 +15,7 @@ const createGroup = async (name, creatorId) => {
         })
         if (!creator) { throw new Error('Creator not found'); }
 
+        // creator group with user as creator
         const group = await prisma.group.create({
             data: {
                 name,
@@ -33,8 +37,10 @@ const createGroup = async (name, creatorId) => {
 };
 
 // READ
-const getGroups = async () => {
-    const groups = await prisma.group.findMany();
+const getGroups = async (userId) => {
+    const groups = await prisma.group.findMany({
+        where: { creatorId: userId }
+    });
     return groups;
 };
   

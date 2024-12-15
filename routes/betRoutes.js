@@ -1,18 +1,20 @@
 const express = require('express');
+const { authenticate } = require('../middlewares/authenticateMiddleware.js');
+const { authorizeBetCreator } = require('../middlewares/authorizeMiddleware.js');
 const { createBet, getBets, updateBet, deleteBet } = require('../controllers/betController');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
-    const bet = await createBet(req.body);
+router.post('/', authenticate, async (req, res) => {
+    const bet = await createBet(req.userId, req.body);
     res.json(bet);
 });
 
-router.get('/', async (req, res) => {
-    const bets = await getBets();
+router.get('/', authenticate, async (req, res) => {
+    const bets = await getBets(req.userId);
     res.json(bets);
 });
   
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, authorizeBetCreator, async (req, res) => {
     const bet = await updateBet(
         parseInt(req.params.id), 
         req.body
@@ -20,7 +22,7 @@ router.put('/:id', async (req, res) => {
     res.json(bet);
 });
   
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, authorizeBetCreator, async (req, res) => {
     await deleteBet(parseInt(req.params.id));
     res.json({ message: 'Bet deleted' });
 });
