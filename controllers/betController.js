@@ -14,6 +14,7 @@ const createBet = async (userId, betData) => {
     } = betData;
 
     const creatorId = userId;
+    console.log(creatorId)
 
     // makes sure required opponent id is given
     if (!opponentGroupId && !opponentId) { throw new Error('Bet must have opponent') }

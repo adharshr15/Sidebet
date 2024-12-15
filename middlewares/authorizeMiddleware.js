@@ -32,7 +32,6 @@ const authorizeGroupCreator = async (req, res, next) => {
 
     const { userId } = req;
     const groupId = parseInt(req.params.id, 10);
-    console.log("userId: " + userId)
 
     try {
         // fetch group
@@ -40,7 +39,6 @@ const authorizeGroupCreator = async (req, res, next) => {
             where: { id: groupId }, 
             select: { creatorId: true }
         });
-        console.log("groups creatorId: " + group.creatorId)
 
         // ensure group found
         if (!group) { return res.status(404).json({ message: "Group not found " }); }

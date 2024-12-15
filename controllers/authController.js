@@ -33,8 +33,11 @@ const login = async (authData) => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) { throw new Error('Failed to login') };
+    console.log(user.id)
 
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log("password: " + password);
+    console.log("user.password: " + user.password);
     if (!isMatch) { throw new Error('Invalid Credentials')};
 
     return user
