@@ -1,8 +1,11 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const authorizeBetCreator = async (req, res, next) => {
     console.log("authorize bet creator middlware hit");
-    
+
     const { userId } = req;
-    const { id: betId } = req.params
+    const betId = parseInt(req.params.id, 10);
 
     try {
         // fetch bet
@@ -10,62 +13,47 @@ const authorizeBetCreator = async (req, res, next) => {
             where: { id: betId },
             select: { creatorId: true }
         });
-
         // ensure bet found
         if (!bet) { return res.status(404).json({ message: 'Bet not found' }); }
-
+        
         // ensure bet creator and user are same
         if (bet.creatorId !== userId) { return res.status(403).json({ message: 'Forbidden: You do not have access to modify this bet' }); }
 
         // if user is authorized continue
         next();
     } catch (e) {
-        res.status(500).json({ message: 'Internal Server Error', e });
+        res.status(500).json({ message: 'Internal Server Error ' + e });
     }
 
-    // const { userId } = req; // Extracted by the authenticate middleware
-    // const { creatorId } = req.body; // Mocked creator of the resource
-
-    // if (userId !== creatorId) {
-    //     return res.status(403).json({ message: 'Forbidden: You do not have access' });
-    // }
-
-    // next();
 }
 
 const authorizeGroupCreator = async (req, res, next) => {
     console.log("authorize middleware hit");
 
-    // const { userId } = req;
-    // const { id: groupId } = req.params
+    const { userId } = req;
+    const groupId = parseInt(req.params.id, 10);
+    console.log("userId: " + userId)
 
-    // try {
-    //     // fetch group
-    //     const group = await prisma.group.findUnique({
-    //         where: { id: groupId }, 
-    //         select: { creatorId: true }
-    //     });
+    try {
+        // fetch group
+        const group = await prisma.group.findUnique({
+            where: { id: groupId }, 
+            select: { creatorId: true }
+        });
+        console.log("groups creatorId: " + group.creatorId)
 
-    //     // ensure group found
-    //     if (!group) { return res.status(404).json({ message: "Group not found " }); }
+        // ensure group found
+        if (!group) { return res.status(404).json({ message: "Group not found " }); }
 
-    //     // ensure group creator and user are same
-    //     if (group.creatorId !== userId) { return res.status(403).json({ message: "You do not have access to modify this group"}); }
+        // ensure group creator and user are same
+        if (group.creatorId !== userId) { return res.status(403).json({ message: "You do not have access to modify this group"}); }
 
-    //     // if authorized continue
-    //     next();   
-    // } catch (e) {
-    //     res.status(500).json({ message: 'Internal Server Error', e });
-    // }
-
-    const { userId } = req; // Extracted by the authenticate middleware
-    const { creatorId } = req.body; // Mocked creator of the resource
-
-    if (userId !== creatorId) {
-        return res.status(403).json({ message: 'Forbidden: You do not have access' });
+        // if authorized continue
+        next();   
+    } catch (e) {
+        res.status(500).json({ message: 'Internal Server Error ' + e });
     }
 
-    next();
 }
 
 module.exports = { authorizeBetCreator, authorizeGroupCreator }
