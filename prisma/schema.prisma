@@ -15,8 +15,8 @@ model User {
     password            String
     createdAt           DateTime            @default(now())
     notifications       Notification[]  
-    sentFriends         Friendship[]        @relation("SentFriendships")
-    receivedFriends     Friendship[]        @relation("ReceivedFriendships")
+    SentFriendships     Friendship[]        @relation("SentFriendships")
+    receivedFriendships Friendship[]        @relation("ReceivedFriendships")
     createdGroups       Group[]             
     memberOfGroups      Group[]             @relation("GroupMembers")
     createdBets         Bet[]               @relation("CreatedBets")

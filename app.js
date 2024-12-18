@@ -16,8 +16,10 @@ const betRoutes = require('./routes/betRoutes');
 app.use('/bets', betRoutes);
 
 const authRoutes = require('./routes/authRoutes');
-app.use('/auth', authRoutes)
+app.use('/auth', authRoutes);
 
+const friendshipsRoutes = require('./routes/friendshipsRoutes');
+app.use('/friendships', friendshipsRoutes);
 
 // TEST ROUTES
 app.get('/protected', authenticate, (req, res) => {

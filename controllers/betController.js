@@ -74,7 +74,7 @@ const createBet = async (userId, betData) => {
 
         return bet;
     } 
-    catch (error) { throw new Error(`Failed to create bet: ${error.message}`) };
+    catch (error) { throw new Error(`Failed to create bet: ${error.message}`); };
 }
 
 
