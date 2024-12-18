@@ -2,32 +2,39 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // CREATE
-const createFriendship = async (userId, userBid) => {
+const createFriendship = async (userId, friendshipData) => {
     const userAId = userId;
+    const { userBId } = friendshipData;
+    console.log(userAId);
+    console.log(userBId);
 
     try {
+        console.log('in try')
         const userA = await prisma.user.findUnique({
             where: { id: userAId }, 
             include: { sentFriendships: true }
-        });
+        })
         if (!userA) { throw new Error('userA not found'); }
+        console.log('found userA')
 
         const userB = await prisma.user.findUnique({
             where: { id: userBId },
             include: { receivedFriendships: true }
         });
         if (!userB) {throw new Error('userB not found'); }
+        console.log('found userB')
 
         const friendship = await prisma.friendship.create({
             data: {
-                userAId,
-                userBId
+                friendAId : userAId,
+                friendBId : userBId
             },
             include: {
-                userA: true,
-                userB: true
+                friendA : true,
+                friendB : true
             }
         });
+        console.log(friendship)
 
         return friendship;
     } catch (e) {
@@ -38,7 +45,12 @@ const createFriendship = async (userId, userBid) => {
 // READ
 const getFriendships = async (userId) => {
     const friendships = await prisma.friendship.findMany({
-        where: { userAId: userId }
+        where: {
+            OR: [
+                { friendAId: userId },
+                { friendBId: userId }
+            ]
+        }
     });
 
     return friendships;

@@ -15,7 +15,7 @@ model User {
     password            String
     createdAt           DateTime            @default(now())
     notifications       Notification[]  
-    SentFriendships     Friendship[]        @relation("SentFriendships")
+    sentFriendships     Friendship[]        @relation("SentFriendships")
     receivedFriendships Friendship[]        @relation("ReceivedFriendships")
     createdGroups       Group[]             
     memberOfGroups      Group[]             @relation("GroupMembers")
@@ -92,6 +92,7 @@ model Transaction {
 
 enum Status {
     PENDING
+    ACCEPTED
     COMPLETED
     CANCELED
     SETTLED 

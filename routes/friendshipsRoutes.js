@@ -27,3 +27,5 @@ router.delete('/:id', authenticate, authorizeFriendshipCreator, async (req, res)
     await deleteFriendship(parseInt(req.params.id));
     res.json({ message: 'Friendship deleted' });
 });
+
+module.exports = router;

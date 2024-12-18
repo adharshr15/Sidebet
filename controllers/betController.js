@@ -81,7 +81,12 @@ const createBet = async (userId, betData) => {
 // READ
 const getBets = async (userId) => {
     const bets = await prisma.bet.findMany({
-        where: { creatorId: userId }
+        where: {
+            OR: [
+                { creatorId: userId },
+                { opponentId: userId }
+            ]
+        }
     });
     return bets;
 }
