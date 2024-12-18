@@ -7,14 +7,13 @@ const createBet = async (userId, betData) => {
         description,
         deadline,
         amount,
-        //creatorId,    ** using userId now passed through params instead of betData
+        // creatorId,    ** using userId now passed through params instead of betData
         opponentId,
         opponentGroupId,
         isGroupBet
     } = betData;
 
     const creatorId = userId;
-    console.log(creatorId)
 
     // makes sure required opponent id is given
     if (!opponentGroupId && !opponentId) { throw new Error('Bet must have opponent') }
@@ -75,14 +74,19 @@ const createBet = async (userId, betData) => {
 
         return bet;
     } 
-    catch (error) { throw new Error(`Failed to create bet: ${error.message}`) };
+    catch (error) { throw new Error(`Failed to create bet: ${error.message}`); };
 }
 
 
 // READ
 const getBets = async (userId) => {
     const bets = await prisma.bet.findMany({
-        where: { creatorId: userId }
+        where: {
+            OR: [
+                { creatorId: userId },
+                { opponentId: userId }
+            ]
+        }
     });
     return bets;
 }

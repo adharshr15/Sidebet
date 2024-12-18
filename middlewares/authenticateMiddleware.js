@@ -9,14 +9,11 @@ const authenticate = (req, res, next) => {
     console.log('Authenticate middleware hit');
 
     const token = req.headers.authorization?.split(' ')[1];
-    console.log(token)
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
     try {
         // verifies token using JWT_SECRET env variable
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("req.userId: " + req.userId)
-        console.log("decoded.userId" + decoded.userId)
         req.userId = decoded.userId;
         next();
     } catch (error) {

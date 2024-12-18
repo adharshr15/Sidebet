@@ -17,7 +17,7 @@ const authorizeBetCreator = async (req, res, next) => {
         if (!bet) { return res.status(404).json({ message: 'Bet not found' }); }
         
         // ensure bet creator and user are same
-        if (bet.creatorId !== userId) { return res.status(403).json({ message: 'Forbidden: You do not have access to modify this bet' }); }
+        if (bet.creatorId !== userId || bet.opponentId !== userId) { return res.status(403).json({ message: 'Forbidden: You do not have access to modify this bet' }); }
 
         // if user is authorized continue
         next();
@@ -54,4 +54,30 @@ const authorizeGroupCreator = async (req, res, next) => {
 
 }
 
-module.exports = { authorizeBetCreator, authorizeGroupCreator }
+const authorizeFriendshipCreator = async (req, res, next) => {
+    console.log("authorize friendship creator middlware hit");
+
+    const { userId } = req;
+    const friendshipId = parseInt(req.params.id, 10);
+
+    try {
+        // fetch friendship
+        const friendship = await prisma.friendship.findUnique({
+            where: { id: friendshipId },
+            select: { friendAId: true, friendBId: true }
+        });
+        // ensure friendship found
+        if (!friendship) { return res.status(404).json({ message: 'Bet not found' }); }
+        
+        // ensure friendship userA or userB and user are same
+        if (friendship.friendAId !== userId && friendship.friendBId !== userId ) { return res.status(403).json({ message: 'Forbidden: You do not have access to modify this bet' }); }
+
+        // if user is authorized continue
+        next();
+    } catch (e) {
+        res.status(500).json({ message: 'Internal Server Error ' + e });
+    }
+
+}
+
+module.exports = { authorizeBetCreator, authorizeGroupCreator, authorizeFriendshipCreator }
