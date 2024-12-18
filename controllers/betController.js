@@ -7,14 +7,13 @@ const createBet = async (userId, betData) => {
         description,
         deadline,
         amount,
-        //creatorId,    ** using userId now passed through params instead of betData
+        // creatorId,    ** using userId now passed through params instead of betData
         opponentId,
         opponentGroupId,
         isGroupBet
     } = betData;
 
     const creatorId = userId;
-    console.log(creatorId)
 
     // makes sure required opponent id is given
     if (!opponentGroupId && !opponentId) { throw new Error('Bet must have opponent') }

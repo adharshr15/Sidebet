@@ -15,8 +15,8 @@ model User {
     password            String
     createdAt           DateTime            @default(now())
     notifications       Notification[]  
-    friendsTo           User[]              @relation("UserFriends")
-    friendsFrom         User[]              @relation("UserFriends")
+    sentFriends         Friendship[]        @relation("SentFriendships")
+    receivedFriends     Friendship[]        @relation("ReceivedFriendships")
     createdGroups       Group[]             
     memberOfGroups      Group[]             @relation("GroupMembers")
     createdBets         Bet[]               @relation("CreatedBets")
@@ -39,7 +39,7 @@ model Bet {
     isGroupBet          Boolean             @default(false)
     createdAt           DateTime            @default(now())
     resolvedAt          DateTime?
-    status              BetStatus           @default(PENDING)
+    status              Status              @default(PENDING)
     resolveMessage      String?
 }
 
@@ -50,6 +50,17 @@ model Group {
     creator             User                @relation(fields: [creatorId], references: [id])
     members             User[]              @relation("GroupMembers")
     receivedBets        Bet[]               @relation("ReceivedGroupBets")
+    status              Status              @default(PENDING)
+}
+
+model Friendship {
+    id                  Int                 @id @default(autoincrement())
+    friendAId           Int
+    friendA             User                @relation("SentFriendships", fields: [friendAId], references: [id])
+    friendBId           Int
+    friendB             User                @relation("ReceivedFriendships", fields: [friendBId], references: [id])
+    createdAt           DateTime            @default(now())
+    status              Status              @default(PENDING)
 }
 
 model Notification {
@@ -79,7 +90,7 @@ model Transaction {
 }
 
 
-enum BetStatus {
+enum Status {
     PENDING
     COMPLETED
     CANCELED
