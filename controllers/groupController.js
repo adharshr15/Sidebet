@@ -19,14 +19,20 @@ const createGroup = async (userId, name) => {
         const group = await prisma.group.create({
             data: {
                 name,
-                creatorId
+                creatorId,
+                members: {
+                    connect: {
+                        id: creatorId
+                    }
+                }
             },
             include: {
                 creator: {
                     include: {
                         createdGroups: true
                     }
-                }
+                }, 
+                members: true
             },
         });
     
@@ -39,17 +45,70 @@ const createGroup = async (userId, name) => {
 // READ
 const getGroups = async (userId) => {
     const groups = await prisma.group.findMany({
-        where: { creatorId: userId }
+        where: {
+            OR: [
+            { creatorId: userId },
+            { members: { some: { id: userId } } }
+            ]
+        },
+        include: {
+            creator: true,
+            members: true
+        }
     });
     return groups;
 };
   
 // UPDATE
 const updateGroup = async (id, data) => {
-    const group = await prisma.group.update({
-        where: { id },
-        data,
-    });
+    // update name
+    if (data.name) {
+        const group = await prisma.group.update({
+            where: { id },
+            data,
+            include: {
+                members: true,
+                creator: true
+            }
+        });
+        
+        return group
+    }
+
+    // add member
+    if (data.memberId && data.action === 'add') {
+        const group = await prisma.group.update({
+            where: { id },
+            data: {
+                members: {
+                    connect: { id: data.memberId }
+                }
+            },
+            include: {
+                members: true
+            }
+        })
+        
+        return group;
+    }
+
+    // remove member
+    if (data.memberId && data.action === 'remove') {
+        const group = await prisma.group.update({
+            where: { id },
+            data: {
+                members: {
+                    disconnect: { id: data.memberId }
+                }
+            },
+            include: {
+                members: true
+            }
+        });
+        
+        return group;
+    }
+    
 
     return group;
 };
